@@ -1,45 +1,29 @@
-import os
 import requests
-import json
 from flask import Flask, render_template, jsonify
 
 app = Flask(__name__)
 
-# Kunci dipasang langsung agar pasti aktif
+# Masukkan API Key Bapak di sini
 API_KEY = "AIzaSyA7OFq8GvEew2-5XwKv8k2UiD4V2DfZm88"
 
-
 def tanya_ai(role, tugas):
-    if not API_KEY:
-        return "API Key belum terpasang di Vercel."
-    
-    # MENGGUNAKAN MODEL TERBARU SESUAI DAFTAR BAPAK
     url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={API_KEY}"
     
+    # Format payload paling simpel
     payload = {
-        "contents": [{
-            "parts": [{"text": f"Anda adalah {role}. {tugas}. Jawab maksimal 1 kalimat singkat dan tegas."}]
-        }]
+        "contents": [{"parts": [{"text": f"Anda adalah {role}. {tugas}. Jawab 1 kalimat."}]}]
     }
-    headers = {'Content-Type': 'application/json'}
     
     try:
-        response = requests.post(url, headers=headers, data=json.dumps(payload), timeout=10)
+        # Langsung kirim JSON tanpa json.dumps agar Flask otomatis urus headers
+        response = requests.post(url, json=payload, timeout=10)
         data = response.json()
         
-        # Mengambil teks dari struktur respons Gemini terbaru
-                if 'candidates' in data and len(data['candidates']) > 0:
-            return data['candidates'][0]['content']['parts'][0]['text']
-        else:
-            # Jika gagal, tampilkan pesan error asli dari Google agar kita tahu masalahnya
-            error_msg = data.get('error', {}).get('message', 'Google menolak permintaan')
-            return f"Error Google: {error_msg}"
-            
-            return ']
-        else:
-            return "Manager sedang memantau floor, coba lagi!"
-    except:
-        return "Koneksi ke server AI terputus."
+        # Ambil teksnya
+        return data['candidates'][0]['content']['parts'][0]['text']
+    except Exception as e:
+        # Jika gagal, tampilkan pesan error aslinya agar kita tahu masalahnya
+        return f"Manager sedang meeting. (Error: {str(e)})"
 
 @app.route('/')
 def index():
@@ -47,12 +31,12 @@ def index():
 
 @app.route('/jalankan_kantor')
 def jalankan():
-    txt = tanya_ai("Manager Informa Bekasi", "Berikan 1 instruksi promo furniture unggulan hari ini")
-    return jsonify({"role": "Manager Bekasi", "text": txt})
+    res = tanya_ai("Manager Informa Bekasi", "Berikan 1 instruksi promo furniture hari ini")
+    return jsonify({"role": "Manager Bekasi", "text": res})
 
 @app.route('/staf_jawab/<path:instruksi>')
 def staf_jawab(instruksi):
-    txt = tanya_ai("Staf Kreatif", f"Buat caption TikTok viral dari instruksi: {instruksi}")
-    return jsonify({"role": "Staf Kreatif", "text": txt})
+    res = tanya_ai("Staf Kreatif", f"Buat caption TikTok dari: {instruksi}")
+    return jsonify({"role": "Staf Kreatif", "text": res})
 
 app = app
