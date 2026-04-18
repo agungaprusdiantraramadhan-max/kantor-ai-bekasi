@@ -5,50 +5,59 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kantor Digital Informa Bekasi</title>
     <style>
-        /* Gaya Dasar */
-        body { 
-            background: #1a1a1a; 
-            color: white; 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            margin: 0; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            min-height: 100vh;
-        }
+        body { background: #1a1a1a; color: white; font-family: sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; }
+        .office-container { position: relative; width: 90%; max-width: 500px; height: 400px; background: #222; border: 3px solid #444; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .floor { position: absolute; width: 200%; height: 200%; background: #2c3e50; top: -50%; left: -50%; transform: rotateX(60deg) rotateZ(-45deg); opacity: 0.2; border: 2px solid #34495e; }
+        .bubble { position: absolute; top: 20px; left: 10%; width: 80%; background: white; color: #333; padding: 15px; border-radius: 15px; font-size: 14px; font-weight: 500; z-index: 10; text-align: center; min-height: 40px; display: flex; align-items: center; justify-content: center; }
+        .character-area { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); text-align: center; z-index: 5; }
+        .avatar { width: 120px; height: 120px; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.5)); }
+        .role-badge { margin-top: 10px; background: #f39c12; color: black; padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 12px; }
+        .btn-start { margin-top: 30px; padding: 15px 40px; font-size: 18px; font-weight: bold; color: white; background: #27ae60; border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 4px 20px rgba(39, 174, 96, 0.4); }
+    </style>
+</head>
+<body>
+    <h1 style="color: #f39c12; margin-bottom: 10px;">INFORMA MM BEKASI</h1>
+    <div class="office-container">
+        <div class="floor"></div>
+        <div id="text-bubble" class="bubble">Siap memulai meeting AI, Pak Agung?</div>
+        <div class="character-area">
+            <img id="main-avatar" src="https://api.dicebear.com/7.x/bottts/svg?seed=Office" class="avatar">
+            <div id="role-text" class="role-badge">Sistem Online</div>
+        </div>
+    </div>
+    <button id="start-btn" class="btn-start" onclick="jalankanMeeting()">MULAI MEETING AI</button>
 
-        /* Area Kantor Virtual */
-        .office-container {
-            position: relative;
-            width: 90%;
-            max-width: 500px;
-            height: 400px;
-            background: #222;
-            border: 3px solid #444;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    <script>
+        async function jalankanMeeting() {
+            const bubble = document.getElementById('text-bubble');
+            const role = document.getElementById('role-text');
+            const avatar = document.getElementById('main-avatar');
+            const btn = document.getElementById('start-btn');
+            btn.disabled = true;
+            btn.innerText = "MEETING BERJALAN...";
+            bubble.innerText = "Manager sedang menyusun strategi...";
+            try {
+                const resM = await fetch('/jalankan_kantor');
+                const dataM = await resM.json();
+                avatar.src = "https://api.dicebear.com/7.x/bottts/svg?seed=Manager";
+                role.innerText = dataM.role;
+                bubble.innerText = dataM.text;
+                setTimeout(async () => {
+                    bubble.innerText = "Staf sedang memproses instruksi...";
+                    const resS = await fetch('/staf_jawab/' + encodeURIComponent(dataM.text));
+                    const dataS = await resS.json();
+                    avatar.src = "https://api.dicebear.com/7.x/bottts/svg?seed=Staf";
+                    role.innerText = dataS.role;
+                    bubble.innerText = dataS.text;
+                    btn.disabled = false;
+                    btn.innerText = "MULAI MEETING LAGI";
+                }, 5000);
+            } catch (error) {
+                bubble.innerText = "Error: Pastikan API Key benar!";
+                btn.disabled = false;
+                btn.innerText = "COBA LAGI";
+            }
         }
-
-        /* Efek Lantai Isometrik */
-        .floor {
-            position: absolute;
-            width: 200%;
-            height: 200%;
-            background: #2c3e50;
-            top: -50%;
-            left: -50%;
-            transform: rotateX(60deg) rotateZ(-45deg);
-            opacity: 0.2;
-            border: 2px solid #34495e;
-        }
-
-        /* Gelembung Bicara */
-        .bubble {
-            position: absolute;
-            top: 20px;
-            left: 10%;
-            width: 80%;
-            background
-          
+    </script>
+</body>
+</html>
