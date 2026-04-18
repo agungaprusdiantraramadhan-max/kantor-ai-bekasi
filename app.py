@@ -7,7 +7,7 @@ app.debug = True  # Tambahkan ini untuk melihat error jika ada
 app = app         # Pastikan ini ada agar Vercel mengenalnya
 
 # Mengambil API Key dari sistem (nanti kita setting di Render agar aman)
-API_KEY = os.environ.get("GEMINI_API_KEY", "AQ.Ab8RN6LEnSn4eq5IcY8uXx1Ex6GyAmSw2Eb_SdiBSKInjCDUhg")
+API_KEY = "AQ.Ab8RN6LEnSn4eq5IcY8uXx1Ex6GyAmSw2Eb_SdiBSKInjCDUhg"
 
 def tanya_ai(role, tugas):
     url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={API_KEY}"
