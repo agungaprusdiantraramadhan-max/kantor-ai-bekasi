@@ -5,7 +5,7 @@ import json
 app = Flask(__name__)
 
 # Kunci langsung tanpa os.environ agar pasti terbaca
-API_KEY = "AQ.Ab8RN6LEnSn4eq5IcY8uXx1Ex6GyAmSw2Eb_SdiBSKInjCDUhg"
+API_KEY = "AIzaSyA7OFq8GvEew2-5XwKv8k2UiD4V2DfZm88"
 
 def tanya_ai(role, tugas):
     # Kita gunakan model gemini-1.5-flash yang paling stabil untuk Vercel
