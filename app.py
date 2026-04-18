@@ -3,6 +3,8 @@ import requests
 import os
 
 app = Flask(__name__)
+app.debug = True  # Tambahkan ini untuk melihat error jika ada
+app = app         # Pastikan ini ada agar Vercel mengenalnya
 
 # Mengambil API Key dari sistem (nanti kita setting di Render agar aman)
 API_KEY = os.environ.get("GEMINI_API_KEY", "AQ.Ab8RN6LEnSn4eq5IcY8uXx1Ex6GyAmSw2Eb_SdiBSKInjCDUhg")
@@ -31,7 +33,5 @@ def staf_jawab(instruksi):
     return jsonify({"role": "Staf Kreatif", "text": caption})
 
 if __name__ == '__main__':
-    # Untuk Render, kita tidak kunci portnya
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port)
-  
+    app.run(host='0.0.0.0', port=5000)
+    
