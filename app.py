@@ -5,8 +5,9 @@ from flask import Flask, render_template, jsonify
 
 app = Flask(__name__)
 
-# Mengambil kunci dari Environment Variable Vercel
-API_KEY = os.environ.get("GEMINI_API_KEY")
+# Kunci dipasang langsung agar pasti aktif
+API_KEY = "AIzaSyA7OFq8GvEew2-5XwKv8k2UiD4V2DfZm88"
+
 
 def tanya_ai(role, tugas):
     if not API_KEY:
@@ -27,8 +28,14 @@ def tanya_ai(role, tugas):
         data = response.json()
         
         # Mengambil teks dari struktur respons Gemini terbaru
-        if 'candidates' in data:
+                if 'candidates' in data and len(data['candidates']) > 0:
             return data['candidates'][0]['content']['parts'][0]['text']
+        else:
+            # Jika gagal, tampilkan pesan error asli dari Google agar kita tahu masalahnya
+            error_msg = data.get('error', {}).get('message', 'Google menolak permintaan')
+            return f"Error Google: {error_msg}"
+            
+            return ']
         else:
             return "Manager sedang memantau floor, coba lagi!"
     except:
